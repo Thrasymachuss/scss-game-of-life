@@ -1,0 +1,7 @@
+@use "./base/resets";
+
+@use "./components/header";
+@use "./components/board";
+@use "./components/cell";
+
+@use "./game-logic/main";

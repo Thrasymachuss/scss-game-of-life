@@ -1,0 +1,78 @@
+@use "../variables/settings";
+@use "../variables/start-position";
+@use "./game-helpers";
+@use "sass:list";
+@use "sass:math";
+
+$full_board: start-position.$START_POSITION;
+$total_animation_time: settings.$NUM_TICKS * settings.$SECONDS_PER_TICK * 1s;
+
+// Run Game of Life
+@for $tick from 1 through settings.$NUM_TICKS {
+  // @debug "Tick #{$tick}";
+  @for $row from 1 through settings.$NUM_ROWS {
+    @for $col from 1 through settings.$NUM_COLS {
+      $num_adjacent: game-helpers.get_num_adjacent(
+        $row,
+        $col,
+        $tick,
+        $full_board
+      );
+      $currently_alive: list.nth(
+        list.nth(list.nth($full_board, $row), $col),
+        $tick
+      );
+
+      @if $num_adjacent == 3 {
+        $currently_alive: 1;
+      } @else if $num_adjacent != 2 {
+        $currently_alive: 0;
+      }
+
+      $full_board: game-helpers.insert_into_board(
+        $row,
+        $col,
+        $currently_alive,
+        $full_board
+      );
+    }
+  }
+}
+
+// Convert above calculations into CSS animations
+@for $row from 1 through settings.$NUM_ROWS {
+  @for $col from 1 through settings.$NUM_COLS {
+    @keyframes animation-#{$row}-#{$col} {
+      0% {
+        opacity: list.nth(list.nth(start-position.$START_POSITION, $row), $col);
+      }
+      @for $tick from 1 through settings.$NUM_TICKS {
+        $percent: calc(math.div($tick, settings.$NUM_TICKS) * 100%);
+        @if $tick > 1 {
+          $half-percent: calc(
+            math.div($tick - 1, settings.$NUM_TICKS) *
+              100% +
+              math.div(1, settings.$NUM_TICKS) *
+              50%
+          );
+          #{$half-percent} {
+            opacity: list.nth(
+              list.nth(list.nth($full_board, $row), $col),
+              $tick - 1
+            );
+          }
+        }
+        #{$percent} {
+          opacity: list.nth(list.nth(list.nth($full_board, $row), $col), $tick);
+        }
+      }
+    }
+
+    .cell-#{$row}-#{$col} .cell-inner {
+      animation: animation-#{$row}-#{$col}
+        $total_animation_time
+        linear
+        forwards;
+    }
+  }
+}

@@ -1,0 +1,45 @@
+@use "../variables/settings";
+@use "sass:list";
+
+@function insert_into_board($row, $col, $value, $board) {
+  $new_board: ();
+  @for $row_index from 1 through settings.$NUM_ROWS {
+    $new_row: ();
+    @for $col_index from 1 through settings.$NUM_COLS {
+      $new_col: list.nth(list.nth($board, $row_index), $col_index);
+      @if $row == $row_index and $col == $col_index {
+        $new_col: list.append($new_col, $value);
+      }
+      $new_row: list.append($new_row, $new_col);
+    }
+    $new_board: list.append($new_board, $new_row);
+  }
+  @return $new_board;
+}
+
+@function get_num_adjacent($row, $col, $tick, $board) {
+  $adjacent_count: 0;
+  @for $row_diff from -1 through 1 {
+    @for $col_diff from -1 through 1 {
+      $row_index: $row + $row_diff;
+      $col_index: $col + $col_diff;
+      @if $row_index >=
+        1 and
+        $col_index >=
+        1 and
+        $row_index <=
+        settings.$NUM_ROWS and
+        $col_index <=
+        settings.$NUM_COLS and
+        ($row_diff != 0 or $col_diff != 0)
+      {
+        $is_adjacent: list.nth(
+          list.nth(list.nth($board, $row_index), $col_index),
+          $tick
+        );
+        $adjacent_count: $adjacent_count + $is_adjacent;
+      }
+    }
+  }
+  @return $adjacent_count;
+}

@@ -1,0 +1,17 @@
+@use "../variables/settings";
+
+.board-wrap {
+  min-height: 50vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 5vh;
+
+  .board {
+    border: 1px solid #000;
+    border-bottom: 0;
+    border-right: 0;
+    height: settings.$BOARD_HEIGHT;
+    width: settings.$BOARD_WIDTH;
+  }
+}

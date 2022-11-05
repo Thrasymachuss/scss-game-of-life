@@ -1,0 +1,7 @@
+@use "../game-logic/random-helpers";
+@use "./settings";
+
+$START_POSITION: random-helpers.randomBoard(
+  settings.$NUM_ROWS,
+  settings.$NUM_COLS
+);

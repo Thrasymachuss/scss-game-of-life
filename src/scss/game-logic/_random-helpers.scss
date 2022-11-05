@@ -1,0 +1,21 @@
+@use "sass:list";
+
+@function randomNum($min, $max) {
+  $rand: random();
+  $randomNum: $min + floor($rand * (($max - $min) + 1));
+
+  @return $randomNum;
+}
+
+@function randomBoard($ROWS, $COLS) {
+  $return_board: ();
+  @for $row from 1 through $ROWS {
+    $current_row: ();
+    @for $col from 1 through $COLS {
+      $random_val: randomNum(0, 1);
+      $current_row: list.append($current_row, $random_val);
+    }
+    $return_board: list.append($return_board, $current_row);
+  }
+  @return $return_board;
+}
